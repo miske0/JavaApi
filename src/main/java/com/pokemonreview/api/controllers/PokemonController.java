@@ -1,6 +1,8 @@
 package com.pokemonreview.api.controllers;
 
+import com.pokemonreview.api.dto.PokemonDto;
 import com.pokemonreview.api.models.Pokemon;
+import com.pokemonreview.api.service.PokemonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +14,15 @@ import java.util.List;
 @RequestMapping("/api/")
 public class PokemonController {
 
+    private PokemonService pokemonService;
+
+    public PokemonController(PokemonService pokemonService){
+        this.pokemonService = pokemonService;
+    }
+
     @GetMapping("pokemon")
-    public ResponseEntity<List<Pokemon>> getPokemons() {
-        List<Pokemon> pokemons = new ArrayList<>();
-        pokemons.add(new Pokemon(1, "Eggo", "Water"));
-        pokemons.add(new Pokemon(2, "Lava", "Fire"));
-        pokemons.add(new Pokemon(3, "Pikachu", "Electric"));
-        pokemons.add(new Pokemon(4, "Rober", "Fire"));
-        return ResponseEntity.ok(pokemons);
+    public ResponseEntity<List<PokemonDto>> getPokemons() {
+        return new ResponseEntity<>(pokemonService.getAllPokemon(), HttpStatus.OK);
     }
 
     @GetMapping("pokemon/{id}")
@@ -29,10 +32,8 @@ public class PokemonController {
 
     @PostMapping("pokemon/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Pokemon> createPokemon(@RequestBody Pokemon pokemon) {
-        System.out.println(pokemon.getName());
-        System.out.println(pokemon.getType());
-        return new ResponseEntity<>(pokemon, HttpStatus.CREATED);
+    public ResponseEntity<PokemonDto> createPokemon(@RequestBody PokemonDto pokemonDto) {
+        return new ResponseEntity<>(pokemonService.createPokemon(pokemonDto), HttpStatus.CREATED);
     }
 
     @PutMapping("pokemon/{id}/update")
